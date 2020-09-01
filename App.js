@@ -1,13 +1,29 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { NavigationContainer } from '@react-navigation/native';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+
+import rootReducer from './reducers';
+import Screens from './components/Screens';
+
+const store = createStore(rootReducer);
+
+// Disable yellow warnings in expo app
+console.disableYellowBox = true;
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+
+    <Provider store={store}>
+      <StatusBar hidden />
+      <NavigationContainer>
+        <Screens />
+
+      </NavigationContainer>
+    </Provider>
+
   );
 }
 
