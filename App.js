@@ -9,7 +9,8 @@ import { AppLoading } from 'expo';
 import { Block, Text } from 'galio-framework';
 
 import rootReducer from './reducers';
-import HomeScreen from './components/HomeScreen';
+import HomeScreenScan from './components/HomeScreenScan';
+import HomeScreenGenerate from './components/HomeScreenGenerate';
 import * as actions from './actions';
 
 const store = createStore(rootReducer);
@@ -17,8 +18,12 @@ const store = createStore(rootReducer);
 // Disable yellow warnings in expo app
 console.disableYellowBox = true;
 
-const assetImages = [
+const assetsToLoad = [
   require('./assets/images/qr-icon.png'),
+  require('./assets/images/holding-phone-qr.png'),
+  require('./assets/images/qr-frame.png'),
+  require('./assets/images/covidIllustration.png'),
+  require('./assets/images/GGD.png'),
 ];
 
 function cacheImages(images) {
@@ -35,13 +40,13 @@ export default function MyApp() {
 
 export function App() {
   // REDUX
-  const state = useSelector((st) => st);
+  const state = useSelector((st) => st.main);
   const dispatch = useDispatch();
 
   /* Functions */
 
   const loadResourcesAsync = async () => Promise.all([
-    ...cacheImages(assetImages),
+    ...cacheImages(assetsToLoad),
   ]);
   const handleLoadingError = (error) => {
     // In this case, you might want to report the error to your error
@@ -57,15 +62,15 @@ export function App() {
   return (
     <NavigationContainer>
       <StatusBar hidden />
-      {!state.main.finishedLoading && (
+      {!state.finishedLoading && (
       <AppLoading
         startAsync={loadResourcesAsync}
         onError={handleLoadingError}
         onFinish={handleFinishLoading}
       />
       )}
-      {state.main.finishedLoading && (
-        <HomeScreen />
+      {state.finishedLoading && (
+        <HomeScreenScan />
 
       )}
     </NavigationContainer>

@@ -4,8 +4,8 @@ import { Icon, Block } from 'galio-framework';
 import { BlurView } from 'expo-blur';
 
 // Here be the screens of the app:
-import ScanScreen from './ScanScreen';
-import HistoryScreen from './HistoryScreen';
+import HomeScreen from './HomeScreen';
+import ProfileScreen from './ProfileScreen';
 
 import theme from '../constants/Theme';
 
@@ -17,17 +17,26 @@ export default function Screens() {
       initialRouteName="Scan"
       tabBarOptions={{
         activeTintColor: theme.COLORS.PRIMARY,
+        style: {
+          borderTopWidth: 0,
+        },
       }}
 
     >
       <Tab.Screen
-        name="Scan"
-        component={ScanScreen}
+        name="Home"
+        component={HomeScreen}
         options={{
           tabBarIcon: (({ color, size }) => (<Icon name="aperture" family="feather" size={size} color={color} />)),
         }}
       />
-      <Tab.Screen name="History" component={HistoryScreen} />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: (({ color, size }) => (<Icon name="user" family="feather" size={size} color={color} />)),
+        }}
+      />
     </Tab.Navigator>
   );
 }
