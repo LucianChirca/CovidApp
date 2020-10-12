@@ -26,7 +26,7 @@ function SymptomsForm() {
 
   const submit = () => {
     dispatch(actions.setContentModalVisible(false, null));
-    dispatch({ type: actions.SHOW_CHECKIN_ANIMATION });
+    dispatch(actions.updateCheckinAnimation(true));
   };
 
   const button = (text, value, onChange, last) => {
@@ -74,16 +74,12 @@ function SymptomsForm() {
 
   const forms = [
     {
-      title: 'Have you lately been in contact with anyone sick with Covid-19?',
+      title: 'Have you been in contact with anyone sick with Covid-19 in the last 14 days?',
       content: yesno('douhavecovid'),
     },
     {
-      title: 'Are you lying?',
-      content: yesno('areyoulying'),
-    },
-    {
-      title: 'Are you sure?',
-      content: yesno('areyousure'),
+      title: 'Do you have any Covid-19 symptoms? (fever, coughing, etc.)',
+      content: yesno('douhavecovidsymptoms'),
     },
   ];
 
@@ -95,7 +91,7 @@ function SymptomsForm() {
         </Block>
         {
       forms.map((element) => (
-        <Block style={{ marginBottom: theme.SIZES.BASE * 2 }}>
+        <Block style={{ marginBottom: theme.SIZES.BASE * 2 }} key={element.title}>
           <MyText bold style={{ marginBottom: theme.SIZES.BASE / 2 }}>{element.title}</MyText>
           {element.content}
         </Block>

@@ -5,10 +5,12 @@ import {
 import { Block, Button, Icon } from 'galio-framework';
 import { useSelector, useDispatch } from 'react-redux';
 import LottieView from 'lottie-react-native';
+import { useTranslation } from 'react-i18next';
 
 import * as actions from '../actions';
 import theme from '../constants/Theme';
 import StepByStepList from '../custom_components/StepByStepList';
+import CountryFlag from '../custom_components/CountryFlag';
 
 import {
   CameraModal,
@@ -18,7 +20,9 @@ import {
 } from '../custom_components';
 
 export default function HomeScreenScan(props) {
-  // REDUX
+  /* Translation */
+  const { t } = useTranslation();
+  /* REDUX */
   const state = useSelector((st) => st.scanner);
   const dispatch = useDispatch();
 
@@ -53,7 +57,7 @@ export default function HomeScreenScan(props) {
             source={require('../assets/animations/done.json')}
             autoPlay
             loop={false}
-            onAnimationFinish={() => dispatch({ type: actions.HIDE_CHECKIN_ANIMATION })}
+            onAnimationFinish={() => dispatch(actions.updateCheckinAnimation(false))}
             style={{ width: 200, height: 200, position: 'absolute' }}
           />
           )}
@@ -66,6 +70,7 @@ export default function HomeScreenScan(props) {
         {!animating && (
         <Block flex>
           <Block flex middle>
+            <CountryFlag />
             <Image style={{ width: 300, height: 300 }} source={require('../assets/images/holding-phone-qr.png')} />
             {
               // Holds the buttons
@@ -76,7 +81,7 @@ export default function HomeScreenScan(props) {
               middle
             >
               <ButtonWithIcon
-                text="Show GGD key"
+                text={t('Show GGD key')}
                 iconName="key"
                 onPress={() => dispatch(actions.setContentModalVisible(true, <StepByStepList />))}
               />
@@ -91,7 +96,7 @@ export default function HomeScreenScan(props) {
               fontSize: 16,
             }}
             >
-              Press the button below to read a qr code with your camera!
+              {t('Press the button below to read a QR code with your phone camera!')}
             </Text>
             <Button
               color={theme.COLORS.PRIMARY}
@@ -109,7 +114,7 @@ export default function HomeScreenScan(props) {
                 shadowRadius: 1.41,
               }}
             >
-              Scan QR code
+              {t('Scan QR code')}
             </Button>
           </Block>
         </Block>

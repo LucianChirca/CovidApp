@@ -6,11 +6,15 @@ import {
   ScrollView,
 } from 'react-native';
 import { Block, Icon } from 'galio-framework';
+import { useTranslation } from 'react-i18next';
 
 import theme from '../constants/Theme';
 import MyText from './MyText';
 
 export default function ButtonWithIcon() {
+  /* Translation */
+
+  const { t } = useTranslation();
   /* Helper functions */
   const codeContainer = (code) => (
     <Block
@@ -27,14 +31,15 @@ export default function ButtonWithIcon() {
     </Block>
   );
 
-  const foreword = 'In case you have tested positive for Covid-19, please follow the steps below.';
+  const foreword = t('In case you have been tested positive for Covid-19, please follow the steps below.');
   const steps = [
+
     {
-      title: 'Give GGD the key below to a GGD employee',
+      title: t('Give the code below to a GGD employee'),
       content: codeContainer('696 - 969'),
     },
     {
-      title: 'Eat a strawberry',
+      title: t('Wait until the code is being entered and verified'),
     },
   ];
 
@@ -49,6 +54,7 @@ export default function ButtonWithIcon() {
           style={{
             textAlign: 'center',
             marginBottom: theme.SIZES.BASE * 2,
+            marginHorizontal: theme.SIZES.BASE,
           }}
         >
           {foreword}

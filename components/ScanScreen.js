@@ -23,7 +23,7 @@ export default function ScanScreen(props) {
   /* Functions */
   const handleBarCodeScanner = ({ type, data }) => {
     // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    dispatch({ type: actions.SCAN });
+    dispatch(actions.updateScan(true));
   };
 
   return (

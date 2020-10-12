@@ -29,12 +29,12 @@ export default function CameraModal() {
   /* Functions */
   const handleBarCodeScanner = ({ type, data }) => {
     // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    dispatch(actions.scan());
+    dispatch(actions.updateScan(true));
     dispatch(actions.setCameraModalVisible(false));
     // TEMP
     setTimeout(() => {
       dispatch(actions.setContentModalVisible(true, <SymptomsForm />));
-      dispatch({ type: actions.FINISH_SCANNING });
+      dispatch(actions.updateScan(false));
     }, 2000);
   };
 

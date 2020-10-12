@@ -7,11 +7,14 @@ import { createStore } from 'redux';
 import { Asset } from 'expo-asset';
 import { AppLoading } from 'expo';
 import { Block, Text } from 'galio-framework';
+import { useTranslation } from 'react-i18next';
 
 import rootReducer from './reducers';
 import HomeScreenScan from './components/HomeScreenScan';
 import HomeScreenGenerate from './components/HomeScreenGenerate';
+import { Onboarding } from './custom_components';
 import * as actions from './actions';
+import i18n from './components/i18n';
 
 const store = createStore(rootReducer);
 
@@ -39,7 +42,9 @@ export default function MyApp() {
 }
 
 export function App() {
-  // REDUX
+  /* Translations */
+  const { t } = useTranslation();
+  /* REDUX */
   const state = useSelector((st) => st.main);
   const dispatch = useDispatch();
 
@@ -59,6 +64,24 @@ export function App() {
     dispatch({ type: actions.FINISH_LOADING });
   };
 
+  const onboardingData = [
+    {
+      title: t('We value your privacy.'),
+      image: require('./assets/images/privacy.png'),
+      description: t('Our application does not store any personal information, therefore your data is guaranteed to be safe!'),
+    },
+    {
+      title: t('It\'s simple!'),
+      image: require('./assets/images/holding_phone.png'),
+      description: t('Scan a QR code to check in at a place!'),
+    },
+    {
+      title: t('Get notified!'),
+      image: require('./assets/images/GGD.png'),
+      description: t('If you have been in contact with an active case of Covid-19, you will be notified!'),
+    },
+  ];
+
   return (
     <NavigationContainer>
       <StatusBar hidden />
@@ -69,10 +92,22 @@ export function App() {
         onFinish={handleFinishLoading}
       />
       )}
-      {state.finishedLoading && (
-        <HomeScreenScan />
 
-      )}
+      {
+        // If done loading, but have to show onboarding, show Onboarding
+        state.finishedLoading && state.showOnboarding && (
+        <Onboarding
+          data={onboardingData}
+          onFinish={() => dispatch(actions.updateOnboarding(false))}
+          finishLabel={t('FINISH')}
+        />
+        )
+}
+
+      {
+        // Otherwise show the main app
+        state.finishedLoading && !state.showOnboarding && (<HomeScreenScan />)
+}
     </NavigationContainer>
 
   );

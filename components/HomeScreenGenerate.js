@@ -6,11 +6,14 @@ import { Block, Button, Icon } from 'galio-framework';
 import { useSelector, useDispatch } from 'react-redux';
 import LottieView from 'lottie-react-native';
 import QRCode from 'react-native-qrcode-svg';
+import { useTranslation } from 'react-i18next';
 
 import * as actions from '../actions';
 import theme from '../constants/Theme';
 
 export default function HomeScreenGenerate(props) {
+  /* Translations */
+  const { t } = useTranslation();
   // REDUX
   const mainState = useSelector((st) => st.main);
   const state = useSelector((st) => st.generator);
@@ -44,7 +47,7 @@ export default function HomeScreenGenerate(props) {
               fontWeight: 'bold',
             }}
             >
-              Scan QR code
+              {t('Scan QR code')}
             </Text>
             <Text style={{
               fontFamily: 'Futura',
@@ -54,7 +57,7 @@ export default function HomeScreenGenerate(props) {
               fontSize: 15,
             }}
             >
-              Scan the QR code below to check-in!
+              {t('Scan the QR code below to check in!')}
             </Text>
           </Block>
           <Block center flex={2}>
@@ -79,7 +82,7 @@ export default function HomeScreenGenerate(props) {
               fontSize: 16,
             }}
             >
-              Press the button below to generate a QR code!
+              {t('Press the button below to generate a QR code!')}
             </Text>
             <Button
               color={theme.COLORS.PRIMARY}
@@ -87,7 +90,7 @@ export default function HomeScreenGenerate(props) {
               shadowless
               style={{ width: '100%', alignSelf: 'center', borderRadius: 12 }}
             >
-              Generate QR code
+              {t('Generate QR code')}
             </Button>
           </Block>
         </Block>
