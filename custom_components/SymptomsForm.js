@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Field, reduxForm } from 'redux-form';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 import * as actions from '../actions';
 
@@ -17,6 +18,9 @@ import theme from '../constants/Theme';
 import MyText from './MyText';
 
 function SymptomsForm() {
+  /* Translations */
+  const { t } = useTranslation();
+
   const formState = useSelector((state) => state.form);
   const dispatch = useDispatch();
 
@@ -63,28 +67,30 @@ function SymptomsForm() {
     <Block row>
       <Field
         name={name}
-        component={({ input: { onChange, value, ...input }, ...rest }) => button('No', value, onChange)}
+        component={({ input: { onChange, value, ...input }, ...rest }) => button(t('No'), value, onChange)}
       />
       <Field
         name={name}
-        component={({ input: { onChange, value, ...input }, ...rest }) => button('Yes', value, onChange, true)}
+        component={({ input: { onChange, value, ...input }, ...rest }) => button(t('Yes'), value, onChange, true)}
       />
     </Block>
   );
 
   const forms = [
     {
-      title: 'Have you been in contact with anyone sick with Covid-19 in the last 14 days?',
+      title: t('Have you been in contact with anyone sick with Covid-19 in the last 14 days?'),
       content: yesno('douhavecovid'),
     },
     {
-      title: 'Do you have any Covid-19 symptoms? (fever, coughing, etc.)',
+      title: t('Do you have any Covid-19 symptoms? (fever, coughing, etc.)'),
       content: yesno('douhavecovidsymptoms'),
     },
   ];
 
   return (
-    <ScrollView>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+    >
       <Block style={styles.container}>
         <Block style={{ width: '100%', alignItems: 'center' }}>
           <Image source={require('../assets/images/covidIllustration.png')} style={{ width: 250, height: 250 }} />

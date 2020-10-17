@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, Image } from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, Imag, Vibration } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider, useSelector, useDispatch } from 'react-redux';
@@ -8,6 +8,9 @@ import { Asset } from 'expo-asset';
 import { AppLoading } from 'expo';
 import { Block, Text } from 'galio-framework';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 
 import rootReducer from './reducers';
 import HomeScreenScan from './components/HomeScreenScan';
@@ -15,6 +18,9 @@ import HomeScreenGenerate from './components/HomeScreenGenerate';
 import { Onboarding } from './custom_components';
 import * as actions from './actions';
 import i18n from './components/i18n';
+import { backendIp } from './constants/constants';
+
+const jwtDecode = require('jwt-decode');
 
 const store = createStore(rootReducer);
 
@@ -45,10 +51,83 @@ export function App() {
   /* Translations */
   const { t } = useTranslation();
   /* REDUX */
-  const state = useSelector((st) => st.main);
+  const mainState = useSelector((st) => st.main);
+  const userState = useSelector((st) => st.user);
   const dispatch = useDispatch();
 
+  /* On mount */
+  useEffect(() => {
+    // Should only happen once per install
+    if (userState.token === null) {
+      // Fetch a new user token
+      fetchNewUserToken();
+    }
+
+    registerForPushNotificationsAsync();
+
+    const subscription = Notifications.addNotificationReceivedListener(handleNotification);
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
   /* Functions */
+
+  const registerForPushNotificationsAsync = async () => {
+    if (Constants.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync({
+          ios: {
+            allowAlert: true,
+            allowBadge: true,
+            allowSound: true,
+            allowAnnouncements: true,
+          },
+        });
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get permissions!');
+      }
+      const expoToken = await Notifications.getExpoPushTokenAsync();
+      // console.log(expoToken);
+    } else {
+      alert('Must use physical device!');
+    }
+  };
+
+  const handleNotification = async () => {
+    alert('Notificiation!');
+  };
+
+  const fetchNewUserToken = () => {
+    const requestBody = {
+      type: 'customer',
+    };
+
+    axios({
+      method: 'post',
+      url: `${backendIp}users`,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: requestBody,
+    }).then((response) => {
+      const responseData = response.data;
+      const { token } = responseData;
+      const decodedToken = jwtDecode(token);
+      const userType = decodedToken.type;
+      const userId = decodedToken.id;
+
+      dispatch(actions.updateAuthState(token, userType, userId));
+
+      // console.log(token);
+    }).catch((err) => {
+      alert(err);
+    });
+  };
 
   const loadResourcesAsync = async () => Promise.all([
     ...cacheImages(assetsToLoad),
@@ -85,7 +164,7 @@ export function App() {
   return (
     <NavigationContainer>
       <StatusBar hidden />
-      {!state.finishedLoading && (
+      {!mainState.finishedLoading && (
       <AppLoading
         startAsync={loadResourcesAsync}
         onError={handleLoadingError}
@@ -95,7 +174,7 @@ export function App() {
 
       {
         // If done loading, but have to show onboarding, show Onboarding
-        state.finishedLoading && state.showOnboarding && (
+        mainState.finishedLoading && mainState.showOnboarding && (
         <Onboarding
           data={onboardingData}
           onFinish={() => dispatch(actions.updateOnboarding(false))}
@@ -106,7 +185,7 @@ export function App() {
 
       {
         // Otherwise show the main app
-        state.finishedLoading && !state.showOnboarding && (<HomeScreenScan />)
+        mainState.finishedLoading && !mainState.showOnboarding && (<HomeScreenScan />)
 }
     </NavigationContainer>
 

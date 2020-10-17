@@ -33,7 +33,7 @@ export default function CameraModal() {
     dispatch(actions.setCameraModalVisible(false));
     // TEMP
     setTimeout(() => {
-      dispatch(actions.setContentModalVisible(true, <SymptomsForm />));
+      dispatch(actions.setContentModalVisible(true, <SymptomsForm />, false));
       dispatch(actions.updateScan(false));
     }, 2000);
   };

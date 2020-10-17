@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   TouchableOpacity,
   StyleSheet,
@@ -7,15 +7,45 @@ import {
 } from 'react-native';
 import { Block, Icon } from 'galio-framework';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
 
 import theme from '../constants/Theme';
 import MyText from './MyText';
+import { backendIp } from '../constants/constants';
 
-export default function ButtonWithIcon() {
+export default function StepByStepList() {
+  /* State */
+  const [ggdCode, changeGgdCode] = useState(null);
+
+  useEffect(() => {
+    fetchGgdCode();
+  }, []);
+
+  /* Redux */
+  const userState = useSelector((st) => st.user);
+
   /* Translation */
 
   const { t } = useTranslation();
   /* Helper functions */
+  const fetchGgdCode = () => {
+    axios({
+      method: 'get',
+      url: `${backendIp}users/getsscode/${userState.userId}`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userState.token}`,
+      },
+    }).then((response) => {
+      const responseData = response.data;
+      const { code } = responseData;
+      changeGgdCode(`${code.slice(0, 4)}-${code.slice(4, 8)}`);
+    }).catch((err) => {
+      alert(err);
+    });
+  };
+
   const codeContainer = (code) => (
     <Block
       center
@@ -36,7 +66,7 @@ export default function ButtonWithIcon() {
 
     {
       title: t('Give the code below to a GGD employee'),
-      content: codeContainer('696 - 969'),
+      content: codeContainer(ggdCode),
     },
     {
       title: t('Wait until the code is being entered and verified'),
@@ -44,7 +74,9 @@ export default function ButtonWithIcon() {
   ];
 
   return (
-    <ScrollView>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+    >
       <Block style={styles.container}>
         <Block style={{ width: '100%', alignItems: 'center' }}>
           <Image source={require('../assets/images/GGD.png')} style={{ width: 250, height: 250 }} />

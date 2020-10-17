@@ -36,7 +36,11 @@ export default function CountryFlag() {
     <Block style={{ alignSelf: 'flex-end' }}>
       {flags.map((flag) => (i18n.language === flag.name
         && (
-        <TouchableOpacity onPress={changeLanguage} style={{ padding: 2 }}>
+        <TouchableOpacity
+          key={flag.name}
+          onPress={changeLanguage}
+          style={{ padding: 2 }}
+        >
           <Image
             source={flag.src}
             style={{ width: 32, height: 32 }}

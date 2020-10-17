@@ -5,10 +5,13 @@ import {
   Image,
   Text,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import theme from '../constants/Theme';
 
 export default function LoadingAnimation() {
+  /* Translations */
+  const { t } = useTranslation();
   return (
     <Block>
       <Image source={require('../assets/images/qr-icon.png')} style={{ width: 200, height: 200 }} />
@@ -25,7 +28,9 @@ export default function LoadingAnimation() {
           alignSelf: 'center',
         }}
       >
-        Scanning Code ...
+        {t('Scanning code')}
+        {' '}
+        ...
       </Text>
     </Block>
   );

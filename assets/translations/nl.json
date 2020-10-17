@@ -16,6 +16,9 @@
   "Wait until the code is being entered and verified": "Wacht totdat de code ingevuld en geverifieerd is.",
   "Press the button below to generate a QR code!": "Druk op de onderstaande knop om een QR-code te genereren!",
   "Generate QR code": "Genereer QR-code",
-  "Scan the QR code below to check in!": "Scan de onderstaande QR-code om in te checken!"
+  "Scan the QR code below to check in!": "Scan de onderstaande QR-code om in te checken!",
+  "Scanning code": "Aan het scannen",
+  "Yes": "Ja",
+  "No": "Nee"
 
 }

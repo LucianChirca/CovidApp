@@ -1,13 +1,17 @@
 import * as Actions from '../actions';
 
 const defaultState = {
-  loggedIn: false,
+  token: null,
+  userType: null,
+  userId: null,
 };
 
 export default (state = defaultState, action) => {
   switch (action.type) {
-    case Actions.LOGIN:
-      return { ...state, loggedIn: true };
+    case Actions.UPDATE_AUTH_STATE:
+      return {
+        ...state, token: action.token, userType: action.userType, userId: action.userId,
+      };
     default:
       return state;
   }

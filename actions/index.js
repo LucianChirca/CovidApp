@@ -3,7 +3,6 @@
  */
 export const FINISH_LOADING = 'FINISH_LOADING';
 export const UPDATE_ONBOARDING = 'UPDATE_ONBOARDING';
-export const LOGIN = 'LOGIN';
 
 /*
   Scanning
@@ -21,6 +20,18 @@ export const RESET_QR = 'RESET_QR';
 export const SET_CAMERA_MODAL_VISIBLE = 'SET_CAMERA_MODAL_VISIBLE';
 export const SET_CONTENT_MODAL_VISIBLE = 'SET_CONTENT_MODAL_VISIBLE';
 
+/*
+  Login
+*/
+export const UPDATE_AUTH_STATE = 'UPDATE_AUTH_STATE';
+
+export const updateAuthState = (token, userType, userId) => ({
+  type: UPDATE_AUTH_STATE,
+  token,
+  userType,
+  userId,
+});
+
 export const updateOnboarding = (newValue) => ({
   type: UPDATE_ONBOARDING,
   newValue,
@@ -37,10 +48,11 @@ export const setCameraModalVisible = (visible) => ({
   visible,
 });
 
-export const setContentModalVisible = (visible, content) => ({
+export const setContentModalVisible = (visible = false, content = null, canClose = true) => ({
   type: SET_CONTENT_MODAL_VISIBLE,
   visible,
   content,
+  canClose,
 });
 
 export const updateScan = (newValue) => ({

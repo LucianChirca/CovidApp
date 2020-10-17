@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet, Image, Modal, TouchableOpacity,
+  Platform, Modal,
+  TouchableOpacity,
 } from 'react-native';
 import {
   Block, Text, Button, Icon,
@@ -21,7 +22,7 @@ export default function ContentModal() {
   /* Functions */
 
   const showModal = () => {
-    dispatch(actions.setContentModalVisible(false, state.modalContent));
+    dispatch(actions.setContentModalVisible(false, state.modalContent, state.canCloseModalContent));
     changeModalVisible(true);
   };
 
@@ -60,13 +61,39 @@ export default function ContentModal() {
     }
   }, [modalVisible]);
 
+  const hideModal = () => {
+    dispatch(actions.setContentModalVisible(false, null));
+    changeModalVisible(false);
+  };
+
+  const getCloseModalButton = () => (
+    <TouchableOpacity
+      onPress={hideModal}
+      style={{
+        position: 'absolute',
+        right: 5,
+        top: 5,
+      }}
+    >
+      <Icon
+        name="x"
+        family="feather"
+        size={40}
+        style={{
+          color: theme.COLORS.DARK_TEXT_COLOR,
+        }}
+      />
+    </TouchableOpacity>
+  );
+
   return (
     <Modal
       visible={modalVisible}
       animationType="slide"
-      presentationStyle="pageSheet"
+      presentationStyle={state.canCloseModalContent ? 'pageSheet' : 'fullScreen'}
     >
       {state.modalContent}
+      {state.canCloseModalContent && state.modalContent && Platform.OS !== 'ios' && getCloseModalButton()}
 
     </Modal>
   );

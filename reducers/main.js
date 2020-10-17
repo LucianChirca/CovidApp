@@ -1,12 +1,11 @@
-import Constants from 'expo-constants';
 import * as Actions from '../actions';
 
 const defaultState = {
   showOnboarding: true,
   finishedLoading: false,
-  deviceId: Constants.installationId,
   contentModalVisible: false,
   modalContent: null,
+  canCloseModalContent: true,
 };
 
 export default (state = defaultState, action) => {
@@ -20,6 +19,7 @@ export default (state = defaultState, action) => {
         ...state,
         contentModalVisible: action.visible,
         modalContent: action.content,
+        canCloseModalContent: action.canClose,
       };
     default:
       return state;
