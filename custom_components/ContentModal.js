@@ -1,3 +1,10 @@
+/**
+ * @Author: Lucian Chirca <Zombarian>
+ * @Date:   2020-09-29T17:16:53+03:00
+ * @Last modified by:   Zombarian
+ * @Last modified time: 2020-10-21T18:08:13+03:00
+ */
+
 import React, { useEffect, useState } from 'react';
 import {
   Platform, Modal,

@@ -1,3 +1,10 @@
+/**
+ * @Author: Lucian Chirca <Zombarian>
+ * @Date:   2020-09-01T11:47:21+03:00
+ * @Last modified by:   Zombarian
+ * @Last modified time: 2020-10-22T15:49:03+03:00
+ */
+
 import React, { useEffect } from 'react';
 import { StyleSheet, Imag, Vibration } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -11,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import rootReducer from './reducers';
 import HomeScreenScan from './components/HomeScreenScan';
@@ -57,13 +65,8 @@ export function App() {
 
   /* On mount */
   useEffect(() => {
-    // Should only happen once per install
-    if (userState.token === null) {
-      // Fetch a new user token
-      fetchNewUserToken();
-    }
-
-    registerForPushNotificationsAsync();
+    // Check if a user exists, if not create one
+    handleUserAsync();
 
     const subscription = Notifications.addNotificationReceivedListener(handleNotification);
     return () => {
@@ -72,6 +75,48 @@ export function App() {
   }, []);
 
   /* Functions */
+
+  const getData = async (key) => {
+    try {
+      const value = await AsyncStorage.getItem(key);
+      return value;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const storeData = async (key, value) => {
+    try {
+      await AsyncStorage.setItem(key, value);
+    } catch (e) {
+    // saving error
+    }
+  };
+
+  const handleUserAsync = async () => {
+    AsyncStorage.removeItem('user');
+    const storedUser = await getData('user');
+    const expoToken = await registerForPushNotificationsAsync();
+
+    if (storedUser === null) {
+      // Fetch a new user token
+      fetchNewUserToken(expoToken);
+    } else {
+      const userAsObject = JSON.parse(storedUser);
+      dispatch(actions.updateAuthState(
+        userAsObject.token,
+        userAsObject.userId,
+      ));
+    }
+  };
+
+  const handleOnboardingAsync = async () => {
+    const storedOnboarding = await getData('onboarding');
+    if (storedOnboarding) {
+      // TEMP
+      // dispatch(actions.updateOnboarding(false));
+    }
+  };
 
   const registerForPushNotificationsAsync = async () => {
     if (Constants.isDevice) {
@@ -92,19 +137,21 @@ export function App() {
         alert('Failed to get permissions!');
       }
       const expoToken = await Notifications.getExpoPushTokenAsync();
-      // console.log(expoToken);
-    } else {
-      alert('Must use physical device!');
+      console.log(expoToken);
+      return expoToken ? expoToken.data : null;
     }
+    alert('Must use physical device!');
+    return null;
   };
 
   const handleNotification = async () => {
     alert('Notificiation!');
   };
 
-  const fetchNewUserToken = () => {
+  const fetchNewUserToken = (expoToken) => {
     const requestBody = {
       type: 'customer',
+      notification_token: expoToken,
     };
 
     axios({
@@ -116,12 +163,18 @@ export function App() {
       data: requestBody,
     }).then((response) => {
       const responseData = response.data;
+      console.log(responseData);
       const { token } = responseData;
       const decodedToken = jwtDecode(token);
-      const userType = decodedToken.type;
       const userId = decodedToken.id;
 
-      dispatch(actions.updateAuthState(token, userType, userId));
+      const newUser = {
+        token,
+        userId,
+      };
+
+      storeData('user', JSON.stringify(newUser));
+      dispatch(actions.updateAuthState(token, userId));
 
       // console.log(token);
     }).catch((err) => {
@@ -129,8 +182,11 @@ export function App() {
     });
   };
 
-  const loadResourcesAsync = async () => Promise.all([
+  const handleStartupAsync = async () => Promise.all([
     ...cacheImages(assetsToLoad),
+    /* If onboarding has been closed before,
+       don't show it anymore */
+    handleOnboardingAsync(),
   ]);
   const handleLoadingError = (error) => {
     // In this case, you might want to report the error to your error
@@ -141,6 +197,11 @@ export function App() {
   const handleFinishLoading = async () => {
     // TODO
     dispatch({ type: actions.FINISH_LOADING });
+  };
+
+  const handleFinishOnboarding = async () => {
+    dispatch(actions.updateOnboarding(false));
+    storeData('onboarding', 'completed');
   };
 
   const onboardingData = [
@@ -166,7 +227,7 @@ export function App() {
       <StatusBar hidden />
       {!mainState.finishedLoading && (
       <AppLoading
-        startAsync={loadResourcesAsync}
+        startAsync={handleStartupAsync}
         onError={handleLoadingError}
         onFinish={handleFinishLoading}
       />
@@ -177,7 +238,7 @@ export function App() {
         mainState.finishedLoading && mainState.showOnboarding && (
         <Onboarding
           data={onboardingData}
-          onFinish={() => dispatch(actions.updateOnboarding(false))}
+          onClose={handleFinishOnboarding}
           finishLabel={t('FINISH')}
         />
         )

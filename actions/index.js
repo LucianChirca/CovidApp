@@ -1,3 +1,10 @@
+/**
+ * @Author: Lucian Chirca <Zombarian>
+ * @Date:   2020-09-01T13:32:35+03:00
+ * @Last modified by:   Zombarian
+ * @Last modified time: 2020-10-22T15:48:29+03:00
+ */
+
 /*
   Main
  */
@@ -25,10 +32,9 @@ export const SET_CONTENT_MODAL_VISIBLE = 'SET_CONTENT_MODAL_VISIBLE';
 */
 export const UPDATE_AUTH_STATE = 'UPDATE_AUTH_STATE';
 
-export const updateAuthState = (token, userType, userId) => ({
+export const updateAuthState = (token, userId) => ({
   type: UPDATE_AUTH_STATE,
   token,
-  userType,
   userId,
 });
 

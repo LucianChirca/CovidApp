@@ -1,3 +1,10 @@
+/**
+ * @Author: Lucian Chirca <Zombarian>
+ * @Date:   2020-09-29T16:51:33+03:00
+ * @Last modified by:   Zombarian
+ * @Last modified time: 2020-10-21T18:07:48+03:00
+ */
+
 import React from 'react';
 import {
   TouchableOpacity,

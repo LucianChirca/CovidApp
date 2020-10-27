@@ -1,3 +1,10 @@
+/**
+ * @Author: Lucian Chirca <Zombarian>
+ * @Date:   2020-09-30T14:11:05+03:00
+ * @Last modified by:   Zombarian
+ * @Last modified time: 2020-10-21T18:08:31+03:00
+ */
+
 import React from 'react';
 import { Block, Button } from 'galio-framework';
 import {

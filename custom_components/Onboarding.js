@@ -1,3 +1,10 @@
+/**
+ * @Author: Lucian Chirca <Zombarian>
+ * @Date:   2020-10-07T14:48:44+03:00
+ * @Last modified by:   Zombarian
+ * @Last modified time: 2020-10-21T18:21:19+03:00
+ */
+
 import React, { useState, useRef } from 'react';
 import {
   Image,
@@ -14,7 +21,13 @@ export default function Onboarding(props) {
   const { width } = useWindowDimensions();
   const { height } = useWindowDimensions();
 
-  const { data, finishLabel } = props;
+  const {
+    data,
+    finishLabel,
+    renderItem,
+    onPageChange,
+    onClose,
+  } = props;
 
   const flatListRef = useRef(null);
 
@@ -26,17 +39,18 @@ export default function Onboarding(props) {
     const offset = nativeEvent.contentOffset.x;
     const newIndex = Math.round(offset / width);
     if (index !== newIndex) {
+      if (onPageChange) {
+        onPageChange(newIndex, index);
+      }
       changeIndex(newIndex);
     }
   };
-
-  const { onFinish } = props;
 
   const goToPage = (pageIndex) => {
     flatListRef.current.scrollToOffset({ offset: pageIndex * width });
   };
 
-  const renderItem = ({ item, index }) => (
+  const _renderItem = ({ item, index }) => (
     <View
       style={{
         width,
@@ -110,7 +124,7 @@ export default function Onboarding(props) {
 
   const renderFinish = () => (
     <TouchableOpacity
-      onPress={onFinish}
+      onPress={onClose}
       style={{
         position: 'absolute',
         right: 0,
@@ -132,8 +146,8 @@ export default function Onboarding(props) {
         horizontal
         snapToInterval={width}
         data={data}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
+        renderItem={renderItem || _renderItem}
+        keyExtractor={(item, i) => i.toString()}
         bounces={false}
         decelerationRate="fast"
         showsHorizontalScrollIndicator={false}

@@ -1,3 +1,10 @@
+/**
+ * @Author: Lucian Chirca <Zombarian>
+ * @Date:   2020-09-29T18:19:36+03:00
+ * @Last modified by:   Zombarian
+ * @Last modified time: 2020-10-22T11:09:41+03:00
+ */
+
 import React, { useState, useEffect } from 'react';
 import {
   TouchableOpacity,
@@ -40,9 +47,10 @@ export default function StepByStepList() {
     }).then((response) => {
       const responseData = response.data;
       const { code } = responseData;
-      changeGgdCode(`${code.slice(0, 4)}-${code.slice(4, 8)}`);
+      changeGgdCode(`${code.slice(0, 4)} ${code.slice(4, 8)}`);
     }).catch((err) => {
       alert(err);
+      console.log(err.response.data);
     });
   };
 
