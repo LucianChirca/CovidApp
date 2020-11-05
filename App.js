@@ -27,6 +27,7 @@ import { Onboarding } from './custom_components';
 import * as actions from './actions';
 import i18n from './components/i18n';
 import { backendIp } from './constants/constants';
+import StepByStepList from './custom_components/StepByStepList';
 
 const jwtDecode = require('jwt-decode');
 
@@ -69,12 +70,20 @@ export function App() {
     handleUserAsync();
 
     const subscription = Notifications.addNotificationReceivedListener(handleNotification);
+    const notifInteractionSubscription = Notifications.addNotificationResponseReceivedListener(
+      handleNotificationInteraction,
+    );
     return () => {
       subscription.remove();
+      notifInteractionSubscription.remove();
     };
   }, []);
 
   /* Functions */
+
+  const handleNotificationInteraction = (response) => {
+    dispatch(actions.setContentModalVisible(true, <StepByStepList />));
+  };
 
   const getData = async (key) => {
     try {
@@ -145,7 +154,10 @@ export function App() {
   };
 
   const handleNotification = async () => {
-    alert('Notificiation!');
+    dispatch(actions.setContentModalVisible(true, <StepByStepList />));
+    setTimeout(() => {
+      alert('You have been marked as at risk! Infrom the GGD please!');
+    }, 100);
   };
 
   const fetchNewUserToken = (expoToken) => {
