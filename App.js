@@ -103,7 +103,6 @@ export function App() {
   };
 
   const handleUserAsync = async () => {
-    AsyncStorage.removeItem('user');
     const storedUser = await getData('user');
     const expoToken = await registerForPushNotificationsAsync();
 
